@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "extra_config": {
+    "github_com/devopsfaith/krakend-gologging": {
+      "level": "ERROR",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    },
+    "github_com/devopsfaith/krakend-cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "expose_headers": [
+        "Content-Length"
+      ],
+      "max_age": "12h",
+      "allow_methods": [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT"
+      ]
+    },
+    "github_com/devopsfaith/krakend-botdetector": {
+      "cacheSize": 0
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "ensena",
+  "endpoints": [
+    {
+      "endpoint": "/api/v1/me",
+      "method": "GET",
+      "output_encoding": "json",
+      "headers_to_pass": [
+        "Authorization",
+        "AuthorizationToken",
+        "UserID",
+        "Email",
+        "Elastic-Apm-Traceparent",
+        "Traceparent",
+        "Tracestate"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/me",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://core/"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+  ],
+  "port": 8000
+}
