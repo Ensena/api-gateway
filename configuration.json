@@ -20,7 +20,8 @@
         "GET",
         "HEAD",
         "POST",
-        "PUT"
+        "PUT",
+        "OPTIONS"
       ]
     },
     "github_com/devopsfaith/krakend-botdetector": {

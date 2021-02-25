@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/Ensena/core/env-global"
 	"github.com/Ensena/core/middleware"
@@ -79,21 +81,38 @@ func Authorization() ginHttp.HandlerFunc {
 		//		traceparent := fmt.Sprintf("%s%s", a.TraceContext().Span, a.EnsureParent())
 
 		//var spanID apm.SpanID
-		var traceOptions apm.TraceOptions
-		//copy(spanID[:], t[8:])
-		traceContext := apm.TraceContext{
-			Trace:   a.TraceContext().Trace,
-			Span:    a.TraceContext().Span,
-			Options: traceOptions.WithRecorded(true),
-		}
-		//	r.Header.Set(apmhttp.W3CTraceparentHeader)
 
 		a.Context.SetUserEmail(tx.Email)
 		a.Context.SetUserID(tx.UserID)
+		if c.Request.Header.Get("Traceparent") == "" {
 
-		c.Request.Header.Set("Elastic-Apm-Traceparent", apmhttp.FormatTraceparentHeader(traceContext))
-		c.Request.Header.Add("Traceparent", apmhttp.FormatTraceparentHeader(traceContext))
-		c.Request.Header.Add("Tracestate", "es=s:1")
+			var traceOptions apm.TraceOptions
+			//copy(spanID[:], t[8:])
+			traceContext := apm.TraceContext{
+				Trace:   a.TraceContext().Trace,
+				Span:    a.TraceContext().Span,
+				Options: traceOptions.WithRecorded(true),
+			}
+			//	r.Header.Set(apmhttp.W3CTraceparentHeader)
+
+			c.Request.Header.Set("Elastic-Apm-Traceparent", apmhttp.FormatTraceparentHeader(traceContext))
+			c.Request.Header.Set("Traceparent", apmhttp.FormatTraceparentHeader(traceContext))
+			c.Request.Header.Set("Tracestate", "es=s:1")
+		} else {
+
+			trace := c.Request.Header.Get("Traceparent")
+
+			arrTrace := strings.Split(trace, "-")
+			if len(arrTrace) >= 4 {
+				trace = fmt.Sprintf("%s-%s-%s-%s", arrTrace[0], arrTrace[1], a.TraceContext().Span, arrTrace[3])
+
+			}
+
+			c.Request.Header.Set("Elastic-Apm-Traceparent", trace)
+			c.Request.Header.Set("Traceparent", trace)
+			c.Request.Header.Set("Tracestate", "es=s:1")
+
+		}
 
 	}
 }
