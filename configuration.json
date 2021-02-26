@@ -58,6 +58,61 @@
           "disable_host_sanitize": false
         }
       ]
+    },
+    {
+      "endpoint": "/api/v1/news",
+      "method": "GET",
+      "output_encoding": "json",
+      "headers_to_pass": [
+        "Authorization",
+        "AuthorizationToken",
+        "UserID",
+        "Email",
+        "Elastic-Apm-Traceparent",
+        "Traceparent",
+        "Tracestate"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/news",
+          "encoding": "json",
+          "method": "GET",
+          "sd": "static",
+          "host": [
+            "http://core/"
+          ],
+          "disable_host_sanitize": false
+        }
+      ],
+      "querystring_params": [
+        "username"
+      ]
+    },
+    {
+      "endpoint": "/api/v1/moodle/getUsers",
+      "method": "GET",
+      "output_encoding": "json",
+      "headers_to_pass": [
+        "Authorization",
+        "AuthorizationToken",
+        "UserID",
+        "Email",
+        "Elastic-Apm-Traceparent",
+        "Traceparent",
+        "Tracestate"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/moodle/getUsers",
+          "encoding": "json",
+          "method": "GET",
+          "sd": "static",
+          "host": [
+            "https://external-udp.xn--ensea-rta.cl/"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
     }
   ],
   "port": 8000
